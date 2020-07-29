@@ -1,0 +1,20 @@
+{
+  "/api/*": {
+    "target": "https://www.supremenewyork.com/",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
+  },
+  "/ticket/*": {
+    "target": "https://d17ol771963kd3.cloudfront.net/assets/",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ticket": ""
+    }
+  }
+}

@@ -1,0 +1,204 @@
+<div class="dashboard-container">
+
+  <!--  top tool bar-->
+  <div class="top-bar" style="align-items:center">
+    <div class="task-setting">
+      <span style="font-weight:bold;font-size:20px;color:#F9BD28;">
+        <img class="add-task-button" (click)="opened=!opened" src="assets/svg/playlist_add-white-18dp.svg"/>
+        Tasks: {{taskInfos.length}}
+      </span>
+
+    </div>
+    <div class="button-three">
+      <!-- Stock Proxy -->
+      <span style="font-weight:bold;color:#219E6C;font-size:16px;">Stock Proxy:</span>
+      <select class="task-input" name="stockProxy" id="stockProxy" [ngModel]="curStockProxyGroupIndex" (ngModelChange)="stockProxyChanged($event)">
+        <option value='-1'>localhost</option>
+        <option *ngFor="let group of proxyGroups; let index=index" [value]="index">{{group.name}}</option>
+      </select>
+      <button id="deleteAll" class="button bottom-button" (click)="openModalWithClass(deleteAllTaskModal)">DELETE ALL</button>
+      <button id="stopAll" class="button bottom-button" (click)="stopAll()">STOP ALL</button>
+      <button id="startAll" class="button bottom-button" (click)="startAll()">START ALL</button>
+      <!--  <button id="test" class="button bottom-button" (click)="test()">TEST</button>-->
+    </div>>
+  </div>
+
+  <!--task list-->
+  <div class="tasks-container">
+    <div class="scrollbar-task">
+      <div class="task-list">
+        <table class="table" id="taskTable">
+          <thead>
+            <tr class="table-title">
+              <th width="7%" scope="col">Region</th>
+              <th width="10%" scope="col">Keywords</th>
+              <th width="10%" scope="col">Color</th>
+              <th width="10%" scope="col">Category</th>
+              <th width="10%" scope="col">Profile</th>
+              <th width="10%" scope="col">Proxies</th>
+              <th width="10%" scope="col">Mode</th>
+              <th width="23%" scope="col">Status</th>
+              <th width="10%" scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="taskTableBody">
+            <tr class="table-body" *ngFor="let taskInfo of taskInfos; let index=index">
+              <td width="7%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.region}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.keywords}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.colors}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.category}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.profile.name}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.proxy.name}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.mode}}</td>
+              <td width="23%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.status}}</td>
+              <td width="10%">
+                <img *ngIf="!taskInfo.runnable" class="button" src="assets/png/start.png" width=25 (click)="startTask(index)"/>
+                <img *ngIf="taskInfo.runnable" class="button" src="assets/png/stop.png" width=25 (click)="stopTask(index)"/>
+                <img class="button" src="assets/png/copy.png" width=25 (click)="editTask(index);opened=!opened"/>
+                <img class="button" src="assets/png/delete.png" width=25 (click)="deleteTask(index)"/>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--button bar-->
+<!--<div class="bottom-bar">-->
+<!--  <button id="openCaptcha" class="button bottom-button" (click)="openModalWithClass(loginProxyModal)">LOGIN CAPTCHA:  <span id="captchaNumber">{{getYoutubeLoginNumber()}}</span></button>-->
+<!--  <button id="clearCaptcha" class="button bottom-button" (click)="clearYoutube()">CLEAR CAPTCHA</button>-->
+<!--</div>-->
+
+<ng-template #deleteAllTaskModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Are you sure to delete all tasks?</h4>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
+    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" (click)="deleteAll();curModal.hide()">Delete</button>
+  </div>
+</ng-template>
+
+<ng-template #loginProxyModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Please enter Proxy associated with your Google Account, Leave it blank if using Localhost.</h4>
+    <input id="captchaProxy" name="captchaProxy" placeholder="Enter proxies as ip:port:username:password" [(ngModel)]="captchaProxy"/>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal" style="background:#219E6C" (click)="openCaptcha();curModal.hide()">Login</button>
+  </div>
+</ng-template>
+
+<mat-sidenav position="end" [(opened)]="opened" mode="side">
+  <div class="sidenav-container" style="display: flex;justify-content: space-between;">
+    <div class="bot-variable-col">
+      <!-- Region -->
+      <div [ngClass]="(curTaskInfo.region=='')?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Region:</div>
+        <select class="task-input" name="region" id="region" [(ngModel)]="curTaskInfo.region">
+          <option value="" selected disabled>Region</option>
+          <option value="US">Supreme US</option>
+          <option value="EU">Supreme EU</option>
+          <option value="JP">Supreme JP</option>
+        </select>
+      </div>
+
+      <div [ngClass]="(curTaskInfo.category=='')?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Category:</div>
+        <!-- Category -->
+        <select class="task-input" name="category" id="category" [(ngModel)]="curTaskInfo.category">
+          <option value="" selected disabled>Category</option>
+          <option value="new">New</option>
+          <option value="Jackets">Jackets</option>
+          <option value="Shirts">Shirts</option>
+          <option value="Shorts">Shorts</option>
+          <option value="T-Shirts">T-shirts</option>
+          <option value="Tops/Sweaters">Tops/Sweaters</option>
+          <option value="Sweatshirts">Sweatshirts</option>
+          <option value="Pants">Pants</option>
+          <option value="Hats">Hats</option>
+          <option value="Bags">Bags</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Skate">Skate</option>
+          <option value="Shoes">Shoes</option>
+        </select>
+      </div>
+
+      <div [ngClass]="(curTaskInfo.keywords=='')?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Keywords:</div>
+        <!-- Keywords -->
+        <input type="text" class="task-input" name="keyWords" id="keyWords" placeholder="Keywords" [(ngModel)]="curTaskInfo.keywords"/>
+      </div>
+
+      <div [ngClass]="(curTaskInfo.colors=='')?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Color:</div>
+        <!-- Color -->
+        <input type="text" class="task-input" name="style" id="style" placeholder="Colors" [(ngModel)]="curTaskInfo.colors"/>
+      </div>
+
+      <div [ngClass]="(curTaskInfo.mode=='')?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Mode:</div>
+        <!-- Mode -->
+        <select class="task-input" name="mode" id="mode" [(ngModel)]="curTaskInfo.mode">
+          <option value="" selected disabled>Mode</option>
+          <option value="Base">Base Mode</option>
+          <option value="Stable">Stable Mode</option>
+          <!--          <option value="Fast">Fast Mode</option>-->
+          <option value="Rapid">Rapid Mode</option>
+        </select>
+      </div>
+
+      <div [ngClass]="(curProxyGroupIndex==null)?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Proxy:</div>
+        <!-- Proxy -->
+        <select class="task-input" name="proxy" id="proxy" [ngModel]="curProxyGroupIndex" (ngModelChange)="curProxyGroupIndex = $event">
+          <option value='undefined' selected disabled>Proxy</option>
+          <option value='-1'>localhost</option>
+          <option *ngFor="let group of proxyGroups; let index=index" [value]="index">{{group.name}}</option>
+        </select>
+      </div>
+      <!-- Captcha Bypass -->
+      <!--      <select class="task-input" name="captchaBypass" id="captchaBypass" [(ngModel)]="curTaskInfo.captchaBP">-->
+      <!--        <option value="" selected disabled>Captcha-BP</option>-->
+      <!--        <option value="true">ON</option>-->
+      <!--        <option value="false">OFF</option>-->
+      <!--      </select>-->
+
+      <div [ngClass]="(curProfileIndex==null)?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Profile:</div>
+        <!-- Profile -->
+        <select class="task-input" name="profile" id="profile" [ngModel]="curProfileIndex" (ngModelChange)="curProfileIndex = $event">
+          <option value='undefined' disabled selected>Profile</option>
+          <option *ngFor="let profile of profiles; let index=index" [value]="index">{{profile.name}}</option>
+        </select>
+      </div>
+
+      <div [ngClass]="(curTaskInfo.monitorDelay==null)?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Monitor:</div>
+        <!-- Delays -->
+        <input type="text" class="task-input" name="monitor_delay" id="monitor_delay" placeholder="Monitor Delay" [(ngModel)]="curTaskInfo.monitorDelay"/>
+      </div>
+
+      <div [ngClass]="(curTaskInfo.checkoutDelay==null)?'bot-modal-title-inactive':'bot-modal-title'">
+        <div>Checkout:</div>
+        <input type="text" class="task-input" name="checkout_delay" id="checkout_delay" placeholder="Checkout Delay" [(ngModel)]="curTaskInfo.checkoutDelay"/>
+      </div>
+
+      <div style="margin-top: 20px">
+        <button class="button" id="clearForm" (click)="clearForm()">
+          CLEAR
+        </button>
+        <button class="button" id="createTask" (click)="addTask()">
+          CREATE
+        </button>
+      </div>
+    </div>
+    <a (click)="opened = !opened">
+      <img src="assets/svg/menu_open-24px.svg" class="close-sidenav filter-inactive" style="position:fixed;bottom:5px;right:230px;
+      width:30px;-webkit-transform: scaleX(-1);transform:scaleX(-1)"/>
+    </a>
+  </div>
+</mat-sidenav>

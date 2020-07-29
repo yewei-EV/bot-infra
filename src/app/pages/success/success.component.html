@@ -1,0 +1,39 @@
+<div class="success-page-container">
+  <!--success list-->
+  <div class="success-container">
+    <div class="scrollbar-success">
+      <div class="success-list">
+        <table class="table" id="successTable">
+          <thead>
+          <tr class="table-title">
+            <th width="10%" scope="col">Region</th>
+            <th width="10%" scope="col">Mode</th>
+            <th width="10%" scope="col">Profile</th>
+            <th width="30%" scope="col">Product</th>
+            <th width="30%" scope="col">Date</th>
+            <th width="10%" scope="col">Status</th>
+          </tr>
+          </thead>
+          <tbody id="successTableBody">
+            <tr class="table-body" *ngFor="let success of successLog">
+              <td width="10%">{{success.region}}</td>
+              <td width="10%">{{success.mode}}</td>
+              <td width="10%">{{success.profile}}</td>
+              <td width="30%">{{success.product}}</td>
+              <td width="30%">{{success.date}}</td>
+              <td width="10%">{{success.status}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<div class="bottom-bar">-->
+<!--  <div class="input-group-append" id="bottom-bar-container">-->
+<!--    <input id="discordLink" type="text" placeholder="Discord WebHook"/>-->
+<!--    <button class="button bottom-button" id="addWebHookBtn">SAVE</button>-->
+<!--    <button class="button bottom-button" id="testWebHookBtn">TEST</button>-->
+<!--  </div>-->
+<!--</div>-->

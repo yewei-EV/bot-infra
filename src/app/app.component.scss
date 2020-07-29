@@ -1,0 +1,91 @@
+.activation {
+  text-align: center;
+
+  input {
+    width: 800px;
+    height: 50px;
+    margin-bottom: 50px;
+    font-size: 20px;
+    border-radius: 5px;
+    border: 3px solid #f9a128;
+    box-shadow: 2px 5px 20px rgba(119,119,119,0.2);
+  }
+
+  button {
+    width: 400px;
+    height: 50px;
+    background-color: #f9a128;
+    border-radius: 10px;
+    border: none;
+    font-size: 20px;
+    box-shadow: 2px 5px 20px rgba(119,119,119,0.2);
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+mat-sidenav-container {
+  height: 100vh;
+}
+mat-sidenav {
+  text-align: center;
+}
+mat-sidenav-content {
+  overflow-x: hidden;
+}
+.mat-drawer-container {
+  background-color: transparent;
+}
+
+.mat-sidenav {
+  width: 80px;
+  background: #121212;
+  border-right: 1px solid black
+}
+
+.filter-inactive{
+  filter: invert(88%) sepia(2%) saturate(17%) hue-rotate(321deg) brightness(93%) contrast(88%);
+}
+
+.close-sidenav:hover {
+  filter: invert(67%) sepia(59%) saturate(907%) hue-rotate(340deg) brightness(101%) contrast(95%);
+}
+
+.arrow-orange {
+  filter: invert(67%) sepia(59%) saturate(907%) hue-rotate(340deg) brightness(101%) contrast(95%);
+}
+
+.side-nav-title {
+  color: #C8C8C8;
+  font-size: 12px;
+}
+
+.side-nav-icon {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.side-nav-icon:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+.router-link-active {
+  .side-nav-title {
+    color: #F9BD28!important;
+    font-weight: bold;
+  }
+  img {
+    filter: invert(67%) sepia(48%) saturate(735%) hue-rotate(356deg) brightness(101%) contrast(94%);
+  }
+}
+
+.side-nav-show {
+  position: fixed;
+  bottom: 50%;
+  width: 30px;
+  background: transparent;
+  z-index: 1
+}

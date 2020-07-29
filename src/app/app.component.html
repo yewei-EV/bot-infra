@@ -1,0 +1,76 @@
+<ng-container class="activation-container" *ngIf="!isActivated">
+  <div class="activation">
+    <div style="background-color: rgba(0,0,0,0.6)">
+      <img style="height: 100px; margin: 20px" src="assets/png/logo_hypeeyes.png"/>
+    </div>
+    <div style="height: 300px; padding: 130px; text-align: center">
+      <input type="text" placeholder="Enter Activation Key" [(ngModel)]="activationKey"/>
+      <input type="text" style=" border:3px solid red;" placeholder="Enter proxies as ip:port:username:password (Optional)" [(ngModel)]="validatingProxy"/>
+      <h4 style="height: 30px; color: #EC4C47">{{this.validateMessage}}</h4>
+      <button class="button" style="margin:30px;width:350px;color:greenyellow;background-color:rgb(33,33,33);border:2px solid #F9BD28;" (click)="validate()">
+        Activate
+      </button>
+      <button style="margin:30px;width:350px;color:#f9a128;background-color:rgb(33,33,33);border:2px solid #F9BD28;" (click)="resetMac()">
+        Reset
+      </button>
+    </div>
+  </div>
+</ng-container>
+<div [hidden]="!isActivated">
+  <mat-sidenav-container [hasBackdrop]="false">
+    <mat-sidenav #sideNavLeft [(opened)]="opened" mode="side">
+      <img src="assets/png/logo-only.png" style="width: 75px;margin-top:10px">
+      <div style="font-size:10px;color:white">
+        V 0.5.7
+      </div>
+      <nav>
+        <div routerLink="/dashboard" class="side-nav-icon" style="margin-top: 50px;">
+          <a routerLinkActive="router-link-active">
+            <img src="assets/svg/dvr-24px.svg" class="filter-inactive" style="width: 30px;"/>
+            <div class="side-nav-title">dashboard</div>
+          </a>
+        </div>
+        <div routerLink="/proxy" class="side-nav-icon">
+          <a routerLinkActive="router-link-active">
+            <img src="assets/svg/router-24px.svg" class="filter-inactive" style="width: 30px;"/>
+            <div class="side-nav-title">proxy</div>
+          </a>
+        </div>
+        <div routerLink="/profiles" class="side-nav-icon">
+          <a  routerLinkActive="router-link-active">
+            <img src="assets/svg/contacts-24px.svg" class="filter-inactive" style="width: 30px;"/>
+            <div class="side-nav-title">profile</div>
+          </a>
+        </div>
+        <div routerLink="/success" class="side-nav-icon">
+          <a routerLinkActive="router-link-active">
+            <img src="assets/svg/library_add_check-24px.svg" class="filter-inactive" style="width: 30px;"/>
+            <div class="side-nav-title">success</div>
+          </a>
+        </div>
+        <div routerLink="/captcha" class="side-nav-icon">
+          <a routerLinkActive="router-link-active">
+            <img src="assets/svg/security-black-18dp.svg" class="filter-inactive" style="width: 30px;"/>
+            <div class="side-nav-title">captcha</div>
+          </a>
+        </div>
+        <a (click)="opened = !opened">
+          <img src="assets/svg/menu_open-24px.svg" class="close-sidenav filter-inactive" style="position:fixed;bottom:5px;width:30px;"/>
+        </a>
+      </nav>
+    </mat-sidenav>
+
+    <mat-sidenav #sideNavRight opened="false" mode="side" position="end">
+      <div>我是右边选单</div>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <a (click)="opened = !opened" *ngIf="!opened">
+        <img src="assets/svg/arrow_forward_ios-24px.svg" class="arrow-orange side-nav-show"/>
+      </a>
+      <!--    <button mat-button (click)="sideNavRight.toggle()">切换右边</button>-->
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+

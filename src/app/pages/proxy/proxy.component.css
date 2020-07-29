@@ -1,0 +1,145 @@
+.proxy-container {
+  padding: 10px 10px 40px
+}
+.proxies-group-header {
+  width: 100%;
+  border-radius: 5px;
+  background-color: #121212;
+  color: #F9BD28;
+}
+select {
+  width: 175px !important;
+  margin-right: 10px;
+  background-color: gray;
+  color: rgba(255,255,255,76);
+}
+.button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+.proxy-group {
+  height: 30px;
+  font-size: 20px;
+}
+.new-group {
+  width: 175px !important;
+  height: 40px;
+  font-size: 20px;
+}
+.add-group-button {
+  margin-right: 10px;
+}
+
+.proxies-container {
+  margin: 0 auto auto;
+  border-radius: 10px;
+  background-color: rgb(33,33,33);
+  opacity: 0.9;
+  /*box-shadow: 2px 5px 20px rgba(119,119,119,0.5);*/
+}
+.proxy-list {
+  /*min-height: 690px;*/
+}
+#proxyTable {
+  width:100%;
+  padding: 20px 40px;
+}
+.table-title, th {
+  text-align: start;
+  font-size: 20px;
+  height: 50px;
+  color: #FFFFFF;
+  opacity: 0.87;
+}
+.table-body, td {
+  color: #FFFFFF;
+  font-size: 18px;
+  text-align: start;
+  white-space: nowrap;
+}
+.table-body, tr {
+  box-shadow: 2px 5px 20px rgba(255, 111, 0, 0.36);
+}
+
+.top-button {
+  margin: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  height: 40px;
+  width: 120px!important;
+  border-radius: 5px;
+  box-shadow: 2px 5px 20px rgba(82, 82, 111, 0.2);
+}
+
+#addProxies {
+  background-color: rgb(33,33,33);
+  border: 2px solid #206DDE;
+}
+#testProxies {
+  background-color: rgb(33,33,33);
+  border: 2px solid #f9a128;
+}
+#clearProxies {
+  margin-right: 20px;
+  background-color: #EC4C47;
+}
+
+/*modal*/
+.proxies-group-container {
+  padding-bottom:20px
+}
+.proxy-group-name {
+  color: #FFFFFF;
+  opacity: 0.95;
+  width: 50%;
+  font-size: 20px;
+  background-color: gray;
+  border: none;
+  border-radius: 5px;
+}
+#proxyArea, #newProxyArea {
+  color: #FFFFFF;
+  opacity: 0.95;
+  width: 100%;
+  height: 400px;
+  font-size: 20px;
+  padding: 10px;
+  background-color: gray;
+  border: none;
+  border-radius: 5px;
+}
+.modal-header {
+  color: #F9BD28;
+  background: rgba(0,0,0,.8);
+  border-bottom: 1px solid #F9BD28;
+}
+.modal-body {
+  background: rgba(0,0,0,.8);
+  border-bottom: none;
+}
+.modal-footer {
+  background: rgba(0,0,0,.9);
+  border-top: none;
+}
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color: white;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: white;
+  opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: white;
+  opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: white;
+}
+::placeholder { /* Most modern browsers support this now. */
+  color: white;
+}

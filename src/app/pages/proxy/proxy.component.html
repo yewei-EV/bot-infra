@@ -1,0 +1,102 @@
+<div class="proxy-container">
+  <!--Proxy list-->
+  <div class="proxies-container">
+    <!--Proxies group header-->
+    <div class="proxies-group-header">
+      <div style="float: left; margin-left: 10px; padding: 10px">
+        <span style="margin-right: 20px; font-size: 20px; font-weight: bolder">Proxy Group:</span>
+        <img class="button add-group-button" src="assets/png/add-square.png" height=30 (click)="clearCache();openModalWithClass(newProxyGroupSettingModal)" />
+        <select class="proxy-group" name="proxyGroup" [(ngModel)]="curProxyGroupName" (ngModelChange)="chooseGroup()">
+          <option value="" selected disabled hidden>Choose...</option>
+          <option *ngFor="let proxyGroup of proxyGroups; let index=index" [value]="proxyGroup.name">{{proxyGroup.name}}</option>
+        </select>
+        <img class="button" src="assets/png/setting.png" (click)="openModalWithClass(proxyGroupSettingModal)" height=30 />
+        <img class="button" src="assets/png/delete.png" (click)="openModalWithClass(deleteProxyGroupModal)" height=30 />
+      </div>
+      <div style="float: right; margin-right: 20px">
+<!--        <button id="addProxies" class="button top-button" (click)="clearCache();openModalWithClass(proxyGroupSettingModal)">ADD PROXIES</button>-->
+        <button id="testProxies" class="button top-button" (click)="testProxy()">TEST</button>
+      </div>
+    </div>
+    <div class="scrollbar-proxies">
+      <div class="proxy-list">
+        <table class="table" id="proxyTable">
+          <thead>
+          <tr class="table-title">
+            <th width="15%" scope="col">IP Address</th>
+            <th width="10%" scope="col">Port</th>
+            <th width="15%" scope="col">Username</th>
+            <th width="15%" scope="col">Password</th>
+            <th width="10%" scope="col">Status</th>
+            <th width="5%" scope="col">Action</th>
+          </tr>
+          </thead>
+          <tbody id="proxyTableBody">
+          <tr class="table-body" *ngFor="let item of [].constructor(this.curProxyGroup.ipAddress.length);let i = index">
+            <td width="15%" scope="col">{{this.curProxyGroup.ipAddress[i]}}</td>
+            <td width="10%" scope="col">{{this.curProxyGroup.port[i]}}</td>
+            <td width="15%" scope="col">{{this.curProxyGroup.userName[i]}}</td>
+            <td width="15%" scope="col">{{this.curProxyGroup.password[i]}}</td>
+            <td width="10%" scope="col">{{this.curProxyGroup.status[i]}}</td>
+            <td width="5%">
+              <img class="button" src="assets/png/delete.png" width=25 (click)="deleteProxy(i)"/>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--modal-->
+<ng-template #proxyGroupSettingModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Proxies Group Setting</h4>
+  </div>
+  <div class="modal-body">
+    <form id="proxyGroupSetting">
+      <div class="form-row proxies-group-container">
+        <input type="text" class="form-control proxy-group-name" name="proxyGroupName" placeholder="Group Name" [(ngModel)]="this.proxyName"/>
+      </div>
+      <div class="form-row proxies-add">
+        <textarea id="proxyArea" name="proxyArea" placeholder="Enter proxies as ip:port:username:password" [(ngModel)]="this.proxyText"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
+    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" (click)="editProxyGroup();curModal.hide()">Save</button>
+  </div>
+</ng-template>
+
+<ng-template #newProxyGroupSettingModal>
+  <div class="modal-header">
+    <h4 class="modal-title">New Proxies Group</h4>
+  </div>
+  <div class="modal-body">
+    <form id="newProxyGroupSetting">
+      <div class="form-row proxies-group-container">
+        <input type="text" class="form-control proxy-group-name" name="newProxyGroupName" placeholder="Group Name" [(ngModel)]="proxyName"/>
+      </div>
+      <div class="form-row proxy-add">
+        <textarea id="newProxyArea" name="newProxyArea" placeholder="Enter proxies as ip:port:username:password" [(ngModel)]="proxyText"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
+    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" (click)="addProxyGroup();curModal.hide()">Save</button>
+  </div>
+</ng-template>
+
+<ng-template #deleteProxyGroupModal>
+  <div class="modal-header">
+    <h4 class="modal-title">Are you sure to delete this group?</h4>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
+    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" (click)="deleteProxyGroup();curModal.hide()">Delete</button>
+  </div>
+</ng-template>
