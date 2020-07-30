@@ -16,6 +16,11 @@ export class Setup extends Component {
     }
     await page.setRequestInterception(true);
     page.on('request', async interceptedRequest => {
+      if (this.canAbort(interceptedRequest)) {
+        await interceptedRequest.abort();
+      } else {
+        this.requestWithRetry(page, interceptedRequest);
+      }
     });
     page.on('response', async response => {
       console.debug(response);
@@ -25,6 +30,18 @@ export class Setup extends Component {
     //     console.log(msg);
     //   }
     // });
+  }
+
+  async requestWithRetry(page, request) {
+    const proxy = page['_proxy'] || ' ';
+    await ProxyUtil.proxyHandler(page, request, proxy, async (resp) => {
+      return resp;
+    });
+  }
+
+  canAbort(request: Request) {
+    const url = request.url();
+    return url.includes('any url u wanna block');
   }
 
 }
