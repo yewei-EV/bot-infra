@@ -19,7 +19,7 @@ export class Setup extends Component {
       if (this.canAbort(interceptedRequest)) {
         await interceptedRequest.abort();
       } else {
-        this.requestWithRetry(page, interceptedRequest);
+        await this.requestWithRetry(page, interceptedRequest);
       }
     });
     page.on('response', async response => {

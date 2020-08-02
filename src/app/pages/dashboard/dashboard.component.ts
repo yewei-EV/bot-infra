@@ -109,20 +109,20 @@ export class DashboardComponent implements OnInit {
           }
         }, 100);
         await ProxyUtil.useProxyGroup(page, data.taskInfo.proxy);
-        const userAgent = new UserAgent({deviceCategory: 'mobile'});
-        let device = {
-          name: userAgent.platform,
-          userAgent: userAgent.userAgent,
-          viewport: {
-            width: userAgent.screenWidth,
-            height: userAgent.screenHeight,
-            deviceScaleFactor: 3,
-            isMobile: true,
-            hasTouch: true,
-            isLandscape: false,
-          },
-        };
-        await page.emulate(device);
+        // const userAgent = new UserAgent({deviceCategory: 'mobile'});
+        // let device = {
+        //   name: userAgent.platform,
+        //   userAgent: userAgent.userAgent,
+        //   viewport: {
+        //     width: userAgent.screenWidth,
+        //     height: userAgent.screenHeight,
+        //     deviceScaleFactor: 3,
+        //     isMobile: true,
+        //     hasTouch: true,
+        //     isLandscape: false,
+        //   },
+        // };
+        // await page.emulate(device);
         const htmlPage = await page.goto('https://www.google.com/');
         const text = await htmlPage.text();
 
@@ -289,16 +289,13 @@ export class DashboardComponent implements OnInit {
       taskInfo.runnable = true;
       taskInfo.running = false;
     }
-    //TODO start all
-
-    // setTimeout(async () => {
-    //   for (const stockRequest of this.stockRequests) {
-    //     this.scanStock(stockRequest).then();
-    //   }
-    //   for (const productRequest of this.productRequests) {
-    //     this.scanProduct(productRequest).then();
-    //   }
-    // });
+    const sharedInfo = new SharedInfo();
+    setTimeout(async () => {
+      let length = this.taskInfos.length;
+      for (let index = 0; index < length; index++) {
+        await this.productPurchaseCluster.queue({sharedInfo: sharedInfo, taskInfo: this.taskInfos[index]});
+      }
+    });
   }
 
   addTask() {
@@ -309,7 +306,7 @@ export class DashboardComponent implements OnInit {
       this.curTaskInfo.proxy.name = "localhost";
     }
     this.curTaskInfo.profile = this.profiles[this.curProfileIndex];
-    if (TaskInfo.isFullInfo(this.curTaskInfo)) {
+    // if (TaskInfo.isFullInfo(this.curTaskInfo)) {
       // use proxy
       delete this.curTaskInfo.md5;
       const value = JSON.stringify(this.curTaskInfo);
@@ -319,7 +316,7 @@ export class DashboardComponent implements OnInit {
       localStorage.setItem('taskInfos', JSON.stringify(this.taskInfos));
       // }
       console.log(this.taskInfos)
-    }
+    // }
   }
 
   editTask(index: number) {
