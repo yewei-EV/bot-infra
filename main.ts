@@ -1,13 +1,29 @@
 // import { app, BrowserWindow, screen } from 'electron';
-const {BrowserWindow, app}= require('electron');
+const {BrowserWindow, app, remote}= require('electron');
 const path = require('path');
 const url = require('url');
-
+const net = require('net');
+async function getPort(): Promise<number> {
+  const getAvailablePort = options => new Promise<number>((resolve, reject) => {
+    const server = net.createServer();
+    server.unref();
+    server.on('error', reject);
+    server.listen(options, () => {
+      const {port} = server.address();
+      server.close(() => {
+        resolve(port);
+      });
+    });
+  });
+  return await getAvailablePort(0);
+}
+getPort().then(port => {
+  app.commandLine.appendSwitch('remote-debugging-port', port.toString());
+  global['sharedObj'] = {dirname: path.join(__dirname), port: port};
+});
 let win = null;
 const args = process.argv.slice(1),
     serve = args.some(val => val === '--serve');
-
-global['sharedObj'] = {dirname: path.join(__dirname)};
 
 function createWindow() {
 
@@ -21,6 +37,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: serve,
+      webSecurity: false,
       // disable dev tools
       devTools: true
     },

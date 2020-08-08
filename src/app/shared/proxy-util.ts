@@ -7,7 +7,8 @@ import {SocksProxyAgent} from 'socks-proxy-agent';
 import {PassThrough} from 'stream';
 import * as zlib from 'zlib';
 import * as request from 'request';
-import {ProxyGroup} from '../core/services/supreme/proxy-group';
+import {ProxyInfo} from '../core/google/entities/proxy-info';
+import {ProxyGroup} from '../core/google/entities/proxy-group';
 export type SimpleResponse = {
   status: number,
   headers: IncomingHttpHeaders,
@@ -147,12 +148,18 @@ export class ProxyUtil {
   }
 
   static async useProxyGroup(page: Page, proxyGroup: ProxyGroup) {
-    if (proxyGroup.ipAddress.length > 0) {
-      const count = proxyGroup.ipAddress.length;
-      const index = Math.floor(Math.random() * count);
-      const proxy = ProxyGroup.getProxyString(proxyGroup, index);
-      await this.useProxy(page, proxy);
+    if (proxyGroup.proxies.length <= 0) {
+      return;
     }
+    const browser = page.browser();
+    let index = browser['proxyIndex'];
+    if (!index) {
+      browser['proxyIndex'] = 1;
+      index = 0;
+    } else {
+      browser['proxyIndex'] ++;
+    }
+    await this.useProxy(page, proxyGroup.proxies[index % proxyGroup.proxies.length].toString());
   }
 
   /**

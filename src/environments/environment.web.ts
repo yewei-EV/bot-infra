@@ -5,5 +5,8 @@
 
 export const AppConfig = {
   production: false,
-  environment: 'DEV'
+  environment: 'DEV',
+  isActivated: true,
+  headless: false,
+  devtools: true
 };

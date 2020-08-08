@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <script>
+      console.log(window.location.search);
+      const args = window.location.search.split('=');
+      if (args.length > 1) {
+        document.title = args[1];
+      }
+    </script>
+    <title></title>
+  </head>
+  <body></body>
+</html>

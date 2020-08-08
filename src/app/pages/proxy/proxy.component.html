@@ -32,12 +32,12 @@
           </tr>
           </thead>
           <tbody id="proxyTableBody">
-          <tr class="table-body" *ngFor="let item of [].constructor(this.curProxyGroup.ipAddress.length);let i = index">
-            <td width="15%" scope="col">{{this.curProxyGroup.ipAddress[i]}}</td>
-            <td width="10%" scope="col">{{this.curProxyGroup.port[i]}}</td>
-            <td width="15%" scope="col">{{this.curProxyGroup.userName[i]}}</td>
-            <td width="15%" scope="col">{{this.curProxyGroup.password[i]}}</td>
-            <td width="10%" scope="col">{{this.curProxyGroup.status[i]}}</td>
+          <tr class="table-body" *ngFor="let proxy of this.curProxyGroup.proxies; let i=index">
+            <td width="15%" scope="col">{{proxy.address}}</td>
+            <td width="10%" scope="col">{{proxy.port}}</td>
+            <td width="15%" scope="col">{{proxy.username}}</td>
+            <td width="15%" scope="col">{{proxy.password}}</td>
+            <td width="10%" scope="col">{{proxy.status}}</td>
             <td width="5%">
               <img class="button" src="assets/png/delete.png" width=25 (click)="deleteProxy(i)"/>
             </td>

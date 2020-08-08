@@ -1,14 +1,13 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {ElectronService} from './core/services';
-import {app} from 'electron';
 import {TranslateService} from '@ngx-translate/core';
 import {AppConfig} from '../environments/environment';
 import log4js from 'log4js';
 import getMAC from 'getmac'
 import fs from 'fs';
-import {ActivationKey} from './core/services/supreme/activation-key';
 import HttpsProxyAgent from 'https-proxy-agent/dist/agent';
 import {Util} from './shared';
+import {ActivationKey} from './core/google';
+import {ElectronService} from './core/services/electron/electron.service';
 
 const rp = require('request-promise-native');
 
@@ -26,29 +25,30 @@ export class AppComponent {
   validatingProxy: string = "";
 
   constructor(
-    public electronService: ElectronService,
     private translate: TranslateService,
+    private electronService: ElectronService,
     private changeDetect: ChangeDetectorRef
   ) {
     translate.setDefaultLang('en');
-    console.log('AppConfig', AppConfig);
-
+    this.isActivated = true;
     if (electronService.isElectron) {
       // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
       console.log(process.env);
       console.log('Mode electron');
       console.log('Electron ipcRenderer', electronService.ipcRenderer);
       console.log('NodeJS childProcess', electronService.childProcess);
+      const dirname = this.electronService.remote.app.getPath('userData');
+      this.overrideLocalStorage(dirname);
+      if (AppConfig.production) {
+        this.overrideConsole(dirname);
+        this.activationKey = JSON.parse(localStorage.getItem('activationKey')).key || "";
+      }
     } else {
       console.log('Mode web');
     }
-    this.overrideConsole();
-    this.activationKey = JSON.parse(localStorage.getItem('activationKey')).key || "";
   }
 
-  private overrideConsole() {
-    const dirname = (app || this.electronService.remote.app).getPath('userData');
-    console.log("userData: " + dirname);
+  private overrideConsole(dirname: string) {
     log4js.configure({
       appenders: {
         infoLogs: {
@@ -109,16 +109,6 @@ export class AppComponent {
       oldConsoleError(message, ...optionalParams);
       logger.error(message, ...optionalParams);
     };
-
-    localStorage.getItem = (key: string): string => {
-      if (fs.existsSync(dirname + '/' + key + '.cfg')) {
-        return fs.readFileSync(dirname + '/' + key + '.cfg', 'utf8');
-      }
-      return "[]";
-    }
-    localStorage.setItem = (key: string, value: string): void => {
-      fs.writeFileSync(dirname + '/' + key + '.cfg', value);
-    }
   }
 
   validate() {
@@ -287,6 +277,18 @@ export class AppComponent {
     } catch (e) {
       this.validateMessage = "Error: " + e;
       this.changeDetect.detectChanges();
+    }
+  }
+
+  private overrideLocalStorage(dirname: string) {
+    localStorage.getItem = (key: string): string => {
+      if (fs.existsSync(dirname + '/' + key + '.cfg')) {
+        return fs.readFileSync(dirname + '/' + key + '.cfg', 'utf8');
+      }
+      return "[]";
+    }
+    localStorage.setItem = (key: string, value: string): void => {
+      fs.writeFileSync(dirname + '/' + key + '.cfg', value);
     }
   }
 }

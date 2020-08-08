@@ -1,6 +1,7 @@
 /**
  * Custom angular webpack configuration
  */
+
 module.exports = (config, options) => {
     config.target = 'electron-renderer';
     config.externals = {
@@ -26,14 +27,5 @@ module.exports = (config, options) => {
             break;
         }
     }
-    const rules = config.module.rules
-    rules.push({
-      test: /node_modules[\/\\](iconv-lite)[\/\\].+/,
-      resolve: {
-        aliasFields: ['main']
-      }
-    });
-    config.module.rules = rules;
-
     return config;
 };

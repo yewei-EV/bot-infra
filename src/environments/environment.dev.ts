@@ -5,8 +5,6 @@
 
 export const AppConfig = {
   production: false,
-  baseUrl: '/api',
-  baseUrl2: '/ticket',
   environment: 'DEV',
   isActivated: true,
   headless: false,

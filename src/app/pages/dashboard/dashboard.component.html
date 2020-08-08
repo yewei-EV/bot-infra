@@ -10,12 +10,6 @@
 
     </div>
     <div class="button-three">
-      <!-- Stock Proxy -->
-      <span style="font-weight:bold;color:#219E6C;font-size:16px;">Stock Proxy:</span>
-      <select class="task-input" name="stockProxy" id="stockProxy" [ngModel]="curStockProxyGroupIndex" (ngModelChange)="stockProxyChanged($event)">
-        <option value='-1'>localhost</option>
-        <option *ngFor="let group of proxyGroups; let index=index" [value]="index">{{group.name}}</option>
-      </select>
       <button id="deleteAll" class="button bottom-button" (click)="openModalWithClass(deleteAllTaskModal)">DELETE ALL</button>
       <button id="stopAll" class="button bottom-button" (click)="stopAll()">STOP ALL</button>
       <button id="startAll" class="button bottom-button" (click)="startAll()">START ALL</button>
@@ -48,7 +42,7 @@
               <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.colors}}</td>
               <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.category}}</td>
               <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.profile.name}}</td>
-              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.proxy.name}}</td>
+              <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.proxyGroup.name}}</td>
               <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.mode}}</td>
               <td width="23%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.status}}</td>
               <td width="10%">
@@ -78,17 +72,6 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
     <button type="button" class="btn btn-default btn-danger" data-dismiss="modal" (click)="deleteAll();curModal.hide()">Delete</button>
-  </div>
-</ng-template>
-
-<ng-template #loginProxyModal>
-  <div class="modal-header">
-    <h4 class="modal-title">Please enter Proxy associated with your Google Account, Leave it blank if using Localhost.</h4>
-    <input id="captchaProxy" name="captchaProxy" placeholder="Enter proxies as ip:port:username:password" [(ngModel)]="captchaProxy"/>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-default btn-white" data-dismiss="modal" (click)="curModal.hide()">Close</button>
-    <button type="button" class="btn btn-default" data-dismiss="modal" style="background:#219E6C" (click)="openCaptcha();curModal.hide()">Login</button>
   </div>
 </ng-template>
 
