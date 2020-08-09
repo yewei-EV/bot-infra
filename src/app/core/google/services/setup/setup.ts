@@ -13,10 +13,14 @@ export class Setup extends Service {
 
     await page.setRequestInterception(true);
     page.on('request', async request => {
-      if (this.canAbort(request)) {
-        await request.abort();
-      } else {
-        await this.requestWithRetry(page, request);
+      try {
+        if (this.canAbort(request)) {
+          await request.abort();
+        } else {
+          await this.requestWithRetry(page, request);
+        }
+      } catch (e) {
+        console.warn(e);
       }
     });
 

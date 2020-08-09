@@ -7,8 +7,7 @@ import {SocksProxyAgent} from 'socks-proxy-agent';
 import {PassThrough} from 'stream';
 import * as zlib from 'zlib';
 import * as request from 'request';
-import {ProxyInfo} from '../core/google/entities/proxy-info';
-import {ProxyGroup} from '../core/google/entities/proxy-group';
+import {ProxyGroup} from '../core/google';
 export type SimpleResponse = {
   status: number,
   headers: IncomingHttpHeaders,
@@ -224,6 +223,8 @@ export class ProxyUtil {
         method: req.method(),
         headers: req.headers(),
         body: req.postData(),
+        followAllRedirects: false,
+        followRedirect: false,
         proxy: proxy
       };
 

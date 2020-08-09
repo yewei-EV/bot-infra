@@ -23,11 +23,26 @@ export class EmailService {
     await service.run();
   }
 
+  private checkTaskInfo(taskInfo: TaskInfo, sharedInfo: SharedInfo, page: Page) {
+    setInterval(async () =>  {
+      if (!taskInfo.runnable && taskInfo.running) {
+        taskInfo.running = false;
+        await sharedInfo.har.stop();
+        await page.setRequestInterception(true);
+        page.on('request', async request => {
+          request.abort();
+        });
+        sharedInfo.har.inProgress = false;
+      }
+    });
+  }
+
   private async execute(page: Page, taskInfo: TaskInfo) {
     const har = new PuppeteerHar(page);
     const sharedInfo: SharedInfo = new SharedInfo();
     sharedInfo.har = har;
     sharedInfo.page = page;
+    this.checkTaskInfo(taskInfo, sharedInfo, page);
     const dirname = this.electronService.remote.app.getPath('userData');
     const name = taskInfo.keywords + taskInfo.colors + Date.now();
     const path = dirname + '/results' + name + '.har';
@@ -44,8 +59,6 @@ export class EmailService {
       for (const service of serviceList) {
         await this.executeService(injector, service, taskInfo, sharedInfo);
       }
-      taskInfo.running = true;
-      taskInfo.runnable = false;
       if (har.inProgress) {
         await har.stop();
       }
@@ -59,7 +72,7 @@ export class EmailService {
       if (e === 'retryAgain') {
         taskInfo.runnable = true;
       }
-      console.error(e);
+      console.warn(e);
     }
     taskInfo.running = false;
   }
@@ -94,9 +107,11 @@ export class EmailService {
   }
 
   async run(taskInfo: TaskInfo, sessionId: string): Promise<any> {
+    taskInfo.runnable = true;
     if (taskInfo.running) {
       return ;
     }
+    taskInfo.running = true;
     const page = await this.getPage(sessionId);
     await ProxyUtil.useProxyGroup(page, taskInfo.proxyGroup);
     await this.execute(page, taskInfo);
@@ -105,6 +120,7 @@ export class EmailService {
     if (taskInfo.stopping) {
       return;
     }
+    taskInfo.runnable = false;
     taskInfo.stopping = true;
     taskInfo.stopping = false;
   }
