@@ -7,7 +7,16 @@
     "types": [],
     "esModuleInterop": true
   },
+  "files": [
+
+  ],
   "exclude": [
+    "test.ts",
+    "../main.ts",
+    "polyfills-test.ts",
+    "environments/environment.web.ts",
+    "environments/environment.dev.ts",
+    "environments/environment.prod.ts",
     "**/*.spec.ts"
   ]
 }

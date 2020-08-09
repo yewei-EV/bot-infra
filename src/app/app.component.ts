@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {AppConfig} from '../environments/environment';
-import log4js from 'log4js';
 import getMAC from 'getmac'
 import fs from 'fs';
+import winston from 'winston';
 import HttpsProxyAgent from 'https-proxy-agent/dist/agent';
 import {Util} from './shared';
 import {ActivationKey} from './core/google';
@@ -49,36 +49,20 @@ export class AppComponent {
   }
 
   private overrideConsole(dirname: string) {
-    log4js.configure({
-      appenders: {
-        infoLogs: {
-          type: 'file',
-          filename: dirname + '/debug.log',
-          maxLogSize: 10485760, // 10mb,日志文件大小,超过该size则自动创建新的日志文件
-          backups: 20,  // 仅保留最新的20个日志文件
-          compress: true    //  超过maxLogSize,压缩代码
-        },
-        errorLogs: {
-          type: 'file',
-          filename: dirname + '/error.log',
-          maxLogSize: 10485760,
-          backups: 20,
-          compress: true
-        },
-        justErrors: {
-          type: 'logLevelFilter', // 过滤指定level的文件
-          appender: 'errorLogs',  // appender
-          level: 'error'  // 过滤得到error以上的日志
-        },
-        console: {type: 'console'}
-      },
-      categories: {
-        default: { appenders: ['justErrors', 'infoLogs'], level: 'info' },
-        err: { appenders: ['errorLogs'], level: 'error' },
-      }
-    });
 
-    const logger = log4js.getLogger();
+    const logger = winston.createLogger({
+      level: 'info',
+      format: winston.format.json(),
+      defaultMeta: { service: 'user-service' },
+      transports: [
+        //
+        // - Write all logs with level `error` and below to `error.log`
+        // - Write all logs with level `info` and below to `combined.log`
+        //
+        new winston.transports.File({ filename: dirname + '/error.log', level: 'error' }),
+        new winston.transports.File({ filename: dirname + '/combined.log' }),
+      ],
+    });
     const oldConsoleLog = console.log;
     const oldConsoleWarn = console.warn;
     const oldConsoleError = console.error;

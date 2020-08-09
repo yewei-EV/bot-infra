@@ -24,8 +24,9 @@ export class EmailService {
   }
 
   private checkTaskInfo(taskInfo: TaskInfo, sharedInfo: SharedInfo, page: Page) {
-    setInterval(async () =>  {
+    const interval = setInterval(async () =>  {
       if (!taskInfo.runnable && taskInfo.running) {
+        clearInterval(interval);
         taskInfo.running = false;
         await sharedInfo.har.stop();
         await page.setRequestInterception(true);

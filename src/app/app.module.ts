@@ -20,6 +20,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {RouterModule} from '@angular/router';
 import {MatCardModule} from '@angular/material/card';
+import {PagesModule} from './pages/pages.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -47,6 +48,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MatTabsModule,
     MatSidenavModule,
     MatCardModule,
+    PagesModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

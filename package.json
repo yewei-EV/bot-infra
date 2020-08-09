@@ -84,7 +84,8 @@
     "request-promise-native": "1.0.8",
     "tough-cookie": "^4.0.0",
     "user-agents": "1.0.559",
-    "uuidv4": "6.1.1"
+    "uuidv4": "6.1.1",
+    "winston": "3.3.3"
   },
   "devDependencies": {
     "@angular/animations": "9.1.1",
@@ -141,7 +142,7 @@
     "wait-on": "4.0.0",
     "webdriver-manager": "12.1.7",
     "ts-md5": "1.2.7",
-    "zone.js": "0.10.2"
+    "zone.js": "0.10.3"
   },
   "engines": {
     "node": ">=10.13.0"
