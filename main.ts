@@ -1,11 +1,18 @@
 // import { app, BrowserWindow, screen } from 'electron';
-const {BrowserWindow, app, remote}= require('electron');
+const {BrowserWindow, app, ipcMain, net}= require('electron');
 const path = require('path');
 const url = require('url');
-const net = require('net');
+const nodeNet = require('net');
+const stealth = require('puppeteer-extra-plugin-stealth');
+const puppeteer = require('puppeteer-extra');
+puppeteer.use(stealth());
+app.commandLine.appendArgument("--disable-site-isolation-trials")
+app.allowRendererProcessReuse = true;
+global['sharedObj'] = {};
+let port;
 async function getPort(): Promise<number> {
   const getAvailablePort = options => new Promise<number>((resolve, reject) => {
-    const server = net.createServer();
+    const server = nodeNet.createServer();
     server.unref();
     server.on('error', reject);
     server.listen(options, () => {
@@ -17,16 +24,15 @@ async function getPort(): Promise<number> {
   });
   return await getAvailablePort(0);
 }
-getPort().then(port => {
+getPort().then(p => {
+  port = p;
   app.commandLine.appendSwitch('remote-debugging-port', port.toString());
-  global['sharedObj'] = {dirname: path.join(__dirname), port: port};
 });
 let win = null;
 const args = process.argv.slice(1),
     serve = args.some(val => val === '--serve');
 
-function createWindow() {
-
+async function createWindow() {
   // Create the browser window
   win = new BrowserWindow({
     x: 0,
@@ -36,7 +42,6 @@ function createWindow() {
     icon: path.join(__dirname, 'public/icons/windows/hypeeyes-logo.png'),
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: serve,
       webSecurity: false,
       // disable dev tools
       devTools: true
@@ -51,7 +56,7 @@ function createWindow() {
       electron: require(`${__dirname}/node_modules/electron`)
     });
     win.loadURL('http://localhost:4200').then();
-  } else {
+   } else {
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',
@@ -71,12 +76,33 @@ function createWindow() {
   return win;
 }
 
+async function preparePuppeteerBrowser() {
+  const request = net.request({url: 'http://localhost:' + port + '/json/version'})
+  request.on('response', (response) => {
+    let data = '';
+    response.on('end', async () => {
+      const obj = JSON.parse(data);
+      global['sharedObj'].browser = await puppeteer.connect({
+        browserWSEndpoint: obj.webSocketDebuggerUrl,
+        defaultViewport: null
+      });
+    });
+    response.on("data", chunk => {
+      data += chunk;
+    });
+  });
+  request.end();
+}
+
 try {
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', createWindow);
+  app.on('ready', async () => {
+    await preparePuppeteerBrowser();
+    await createWindow();
+  });
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
@@ -87,11 +113,11 @@ try {
     }
   });
 
-  app.on('activate', () => {
+  app.on('activate', async () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (win === null) {
-      createWindow();
+      await createWindow();
     }
   });
   app.on('login', (event, webContents, request, authInfo, callback) => {

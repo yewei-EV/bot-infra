@@ -9,20 +9,21 @@ export class LoginBrowser extends Service {
     await super.run();
     const page = this.sharedInfo.page;
     this.taskInfo.status = 'Start'
-    await page.goto("https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Dm%26hl%3Den%26next%3Dhttps%253A%252F%252Fm.youtube.com%252F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin");
+    // await page.goto("https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Dm%26hl%3Den%26next%3Dhttps%253A%252F%252Fm.youtube.com%252F&hl=en&flowName=GlifWebSignIn&flowEntry=ServiceLogin");
+    await page.goto("https://accounts.google.com");
 
     this.taskInfo.status = 'Log In';
     //await Util.delay(100000);
-    await page.focus('#Email');
-    await page.keyboard.type('gengpei1985@gmail.com');
+    await page.focus('#identifierId');
+    await page.keyboard.type('mason.strain.26713@gmail.com');
     await page.keyboard.press('Enter');
 
-    const myLocalValue = 'Woshishui1234';
+    const myLocalValue = '7k289f061df';
     await page.waitForSelector('input[type="password"]', { visible: true })
     await page.type('input[type="password"]', myLocalValue)
 
-    await page.waitForSelector('#submit', { visible: true })
-    await page.click('#submit')
+    await page.waitForSelector('#passwordNext', { visible: true })
+    await page.click('#passwordNext')
 
     // cluster performance testing
     // let i:number = 1

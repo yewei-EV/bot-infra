@@ -46,8 +46,8 @@
               <td width="10%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.mode}}</td>
               <td width="23%" [ngClass]="{'green': taskInfo.status === 'Checkout: paid', 'red': taskInfo.status === 'Checkout Failed'}">{{taskInfo.status}}</td>
               <td width="10%">
-                <img *ngIf="!taskInfo.runnable" class="button" src="assets/png/start.png" width=25 (click)="startTask(index)"/>
-                <img *ngIf="taskInfo.runnable" class="button" src="assets/png/stop.png" width=25 (click)="stopTask(index)"/>
+                <img *ngIf="!taskInfo.running" class="button" src="assets/png/start.png" width=25 (click)="startTask(index)"/>
+                <img *ngIf="taskInfo.running" class="button" src="assets/png/stop.png" width=25 (click)="stopTask(index)"/>
                 <img class="button" src="assets/png/copy.png" width=25 (click)="editTask(index);opened=!opened"/>
                 <img class="button" src="assets/png/delete.png" width=25 (click)="deleteTask(index)"/>
               </td>

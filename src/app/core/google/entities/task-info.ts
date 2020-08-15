@@ -18,7 +18,6 @@ export class TaskInfo {
   checkoutDelay: number;
   runnable: boolean = false;
   running: boolean = false;
-  stopping: boolean = false;
   sizeIndex = 0;
   status: string = 'Not Start';
   currentTime: string;

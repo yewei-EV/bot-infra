@@ -2,15 +2,17 @@ import {Service} from '../service';
 import {Injectable} from '@angular/core';
 import { Request } from 'puppeteer';
 import {ProxyUtil, Util} from '../../../../shared';
+import UserAgent from 'user-agents';
 import {AppConfig} from '../../../../../environments/environment';
 
 @Injectable()
 export class Setup extends Service {
+  private userAgent = new UserAgent();
 
   async run() {
     await super.run();
     let page = this.sharedInfo.page;
-
+/*
     await page.setRequestInterception(true);
     page.on('request', async request => {
       try {
@@ -24,6 +26,8 @@ export class Setup extends Service {
       }
     });
 
+ */
+    page.setUserAgent(this.userAgent.userAgent);
     page.on('response', async response => {
       console.debug(response);
     });

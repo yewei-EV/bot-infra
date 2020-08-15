@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit, TemplateRef, ChangeDetectorRef} from '@angular/core';
 import {Md5} from 'ts-md5';
 import {EmailService, ProfileInfo, ProxyGroup, TaskInfo} from '../../core/google';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -26,11 +26,13 @@ export class DashboardComponent implements OnInit {
   };
 
   constructor(
+    private cd: ChangeDetectorRef,
     private emailService: EmailService,
     private modalService: BsModalService
   ) {}
 
   ngOnInit() {
+    setInterval(() => this.cd.detectChanges(), 100);
     this.taskInfos = TaskInfo.readAll();
     this.profiles = ProfileInfo.readAll();
     this.proxyGroups = ProxyGroup.readAll();
@@ -46,7 +48,7 @@ export class DashboardComponent implements OnInit {
 
   async startTask(index: number) {
     const taskInfo = this.taskInfos[index];
-    await this.emailService.run(taskInfo, index.toString());
+    await this.emailService.run(taskInfo, taskInfo.profile.email + index.toString());
   }
 
   async stopTask(index: number) {
@@ -56,7 +58,7 @@ export class DashboardComponent implements OnInit {
 
   async startAll() {
     for (const [index, taskInfo] of this.taskInfos.entries()) {
-      this.emailService.run(taskInfo, index.toString()).then();
+      this.emailService.run(taskInfo, taskInfo.profile.email + index.toString()).then();
     }
   }
 

@@ -2,14 +2,13 @@ import {Injectable, Injector} from '@angular/core';
 import {Setup} from './setup/setup';
 import {LoginBrowser} from './login/login-browser';
 import {PuppeteerHar} from '../../../shared/puppeteer-har';
-import puppeteer from 'puppeteer-extra';
-import stealth from 'puppeteer-extra-plugin-stealth';
 import {ProxyUtil, Util} from '../../../shared';
 import { Browser, Page } from 'puppeteer';
 import {ElectronService} from '../../services/electron/electron.service';
 import { TaskInfo } from '../entities/task-info';
 import {SharedInfo} from '../entities/shared-info';
 import {Service} from './service';
+import path from 'path';
 
 @Injectable()
 export class EmailService {
@@ -23,27 +22,38 @@ export class EmailService {
     await service.run();
   }
 
-  private checkTaskInfo(taskInfo: TaskInfo, sharedInfo: SharedInfo, page: Page) {
-    const interval = setInterval(async () =>  {
+  private checkTaskInfo(taskInfo: TaskInfo, sharedInfo: SharedInfo, page: Page, oldInterval: NodeJS.Timeout) {
+    const interval = setInterval(async () => {
       if (!taskInfo.runnable && taskInfo.running) {
+        console.log('stopped');
         clearInterval(interval);
         taskInfo.running = false;
-        await sharedInfo.har.stop();
-        await page.setRequestInterception(true);
-        page.on('request', async request => {
-          request.abort();
-        });
-        sharedInfo.har.inProgress = false;
+        const har = sharedInfo.har;
+        if (har) {
+          await har.stop();
+          har.inProgress = false;
+        }
+        if (page) {
+          await page.setRequestInterception(true);
+          page.on('request', async request => {
+            request.abort();
+          });
+        }
+      } else if (!taskInfo.running) {
+        clearInterval(interval);
       }
-    });
+    }, 100);
+    if (oldInterval) {
+      clearInterval(oldInterval);
+    }
+    return interval;
   }
 
-  private async execute(page: Page, taskInfo: TaskInfo) {
+  private async execute(page: Page, taskInfo: TaskInfo, sharedInfo: SharedInfo) {
     const har = new PuppeteerHar(page);
-    const sharedInfo: SharedInfo = new SharedInfo();
+
     sharedInfo.har = har;
     sharedInfo.page = page;
-    this.checkTaskInfo(taskInfo, sharedInfo, page);
     const dirname = this.electronService.remote.app.getPath('userData');
     const name = taskInfo.keywords + taskInfo.colors + Date.now();
     const path = dirname + '/results' + name + '.har';
@@ -81,26 +91,31 @@ export class EmailService {
   async getPage(sessionId: string): Promise<Page> {
     const prefix = 'persist:session';
     const partition = prefix + sessionId;
-    const browserWindow = new this.electronService.remote.BrowserWindow({webPreferences: {partition: partition}});
-    const sharedObj = this.electronService.remote.getGlobal('sharedObj');
-    const port = sharedObj.port;
-    await browserWindow.loadFile('public/html/title.html', {query: {title: partition}});
-    await browserWindow.setTitle(partition);
-
-    const response = await fetch('http://localhost:' + port + '/json/version');
-    const data = await response.json();
-    puppeteer.use(stealth());
-    const browser: Browser = await puppeteer.connect({
-      browserWSEndpoint: data.webSocketDebuggerUrl,
-      defaultViewport: null
+    console.log(partition);
+    const browserWindow = new this.electronService.remote.BrowserWindow({
+      webPreferences: {
+        partition: partition,
+        plugins: true,
+        sandbox: true,
+        preload: path.resolve('public/js/preload.js'),
+        contextIsolation: true,
+        enableRemoteModule: false,
+        scrollBounce: true,
+        disableBlinkFeatures: 'AutomationControlled',
+        spellcheck: true,
+        javascript: true
+        // this is removed from chrome
+        // enableWebSQL: true,
+      }
     });
-    const pages = await browser.pages();
+    const url = 'about:blank?id=' + partition;
+    await browserWindow.loadURL(url);
+    browserWindow.webContents.openDevTools();
+    const browser: Browser = this.electronService.remote.getGlobal('sharedObj').browser;
     let page;
-
-    const title = encodeURIComponent(partition);
+    const pages = await browser.pages();
     for (const tmpPage of pages) {
-      console.log(await tmpPage.title(), title);
-      if (await tmpPage.title() == title) {
+      if (await tmpPage.url() == url) {
         page = tmpPage;
       }
     }
@@ -110,19 +125,27 @@ export class EmailService {
   async run(taskInfo: TaskInfo, sessionId: string): Promise<any> {
     taskInfo.runnable = true;
     if (taskInfo.running) {
+      console.warn('it is running, do not try to run it again.');
       return ;
     }
-    taskInfo.running = true;
-    const page = await this.getPage(sessionId);
-    await ProxyUtil.useProxyGroup(page, taskInfo.proxyGroup);
-    await this.execute(page, taskInfo);
+    try {
+      taskInfo.running = true;
+      const sharedInfo: SharedInfo = new SharedInfo();
+      const interval = this.checkTaskInfo(taskInfo, sharedInfo, null, null);
+      const page = await this.getPage(sessionId);
+      this.checkTaskInfo(taskInfo, sharedInfo, page, interval);
+      await ProxyUtil.useProxyGroup(page, taskInfo.proxyGroup);
+      await this.execute(page, taskInfo, sharedInfo);
+      taskInfo.running = false;
+    } catch (e) {
+      console.log(e);
+      taskInfo.running = false;
+    } finally {
+
+    }
   }
   async stop(taskInfo: TaskInfo) {
-    if (taskInfo.stopping) {
-      return;
-    }
     taskInfo.runnable = false;
-    taskInfo.stopping = true;
-    taskInfo.stopping = false;
+    console.log('stopping');
   }
 }
