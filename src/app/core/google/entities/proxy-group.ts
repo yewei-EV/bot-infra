@@ -17,7 +17,7 @@ export class ProxyGroup {
       for (const rawProxy of rawProxyGroup.proxies) {
         proxies.push(Object.assign(new ProxyInfo(), rawProxy));
       }
-      const proxyGroup = Object.assign(new ProxyGroup(), rawProxyGroups);
+      const proxyGroup = Object.assign(new ProxyGroup(), rawProxyGroup);
       proxyGroup.proxies = proxies;
       proxyGroups.push(proxyGroup);
     }

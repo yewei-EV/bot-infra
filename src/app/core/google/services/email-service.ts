@@ -5,10 +5,9 @@ import {PuppeteerHar} from '../../../shared/puppeteer-har';
 import {ProxyUtil, Util} from '../../../shared';
 import { Browser, Page } from 'puppeteer';
 import {ElectronService} from '../../services/electron/electron.service';
-import { TaskInfo } from '../entities/task-info';
-import {SharedInfo} from '../entities/shared-info';
 import {Service} from './service';
 import path from 'path';
+import {SharedInfo, TaskInfo} from '../entities';
 
 @Injectable()
 export class EmailService {
